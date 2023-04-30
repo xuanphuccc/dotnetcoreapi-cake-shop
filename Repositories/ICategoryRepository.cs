@@ -17,6 +17,6 @@ namespace dotnetcoreapi_cake_shop.Repositories
         Task<Category> UpdateCategory(Category category);
 
         // Delete category
-        Task<int> DeleteCategory(Category category);
+        Task<Category> DeleteCategory(Category category);
     }
 }

@@ -55,7 +55,7 @@ namespace dotnetcoreapi_cake_shop.Repositories
         }
 
         // Delete category
-        public async Task<int> DeleteCategory(Category category)
+        public async Task<Category> DeleteCategory(Category category)
         {
             _context.Categories.Remove(category);
             var result = await _context.SaveChangesAsync();
@@ -65,7 +65,7 @@ namespace dotnetcoreapi_cake_shop.Repositories
                 throw new Exception("cannot delete category");
             }
 
-            return result;
+            return category;
         }
     }
 }

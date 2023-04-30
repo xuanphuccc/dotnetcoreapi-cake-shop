@@ -4,9 +4,9 @@ using dotnetcoreapi_cake_shop.Entities;
 
 namespace dotnetcoreapi_cake_shop.Profiles
 {
-    public class CategoryProfiles : Profile
+    public class CategoryProfile : Profile
     {
-        public CategoryProfiles()
+        public CategoryProfile()
         {
 
             CreateMap<Category, CategoryResponseDto>();

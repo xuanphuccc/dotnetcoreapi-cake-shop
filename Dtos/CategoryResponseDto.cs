@@ -17,7 +17,5 @@ namespace dotnetcoreapi_cake_shop.Dtos
         public string? Image { get; set; }
 
         public DateTime? CreateAt { get; set; }
-
-        public List<Product>? Products { get; set; }
     }
 }

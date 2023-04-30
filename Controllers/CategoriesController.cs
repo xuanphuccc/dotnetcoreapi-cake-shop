@@ -20,7 +20,10 @@ namespace dotnetcoreapi_cake_shop.Controllers
         {
             var allCategoryResponseDtos = await _categoryService.GetAllCategories();
 
-            return Ok(allCategoryResponseDtos);
+            return Ok(new ResponseDto()
+            {
+                Data = allCategoryResponseDtos
+            });
         }
 
         [HttpGet("{id}")]
@@ -32,26 +35,36 @@ namespace dotnetcoreapi_cake_shop.Controllers
             }
 
             var categoryResponseDto = await _categoryService.GetCategoryById(id.Value);
-
             if (categoryResponseDto == null)
             {
                 return NotFound(new ResponseDto() { Status = 404, Title = "category not found" });
             }
 
-            return Ok(categoryResponseDto);
+            return Ok(new ResponseDto()
+            {
+                Data = categoryResponseDto
+            });
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateCategory([FromBody] CategoryRequestDto categoryRequestDto)
         {
+            if (categoryRequestDto == null)
+            {
+                return BadRequest(new ResponseDto() { Status = 400, Title = "category is required" });
+            }
+
             try
             {
                 var createdCategoryResponseDto = await _categoryService.CreateCategory(categoryRequestDto);
 
                 return CreatedAtAction(
-                    nameof(CreateCategory),
+                    nameof(GetCategoryById),
                     new { id = createdCategoryResponseDto.CategoryId },
-                    createdCategoryResponseDto
+                    new ResponseDto()
+                    {
+                        Data = createdCategoryResponseDto
+                    }
                 );
             }
             catch (Exception ex)
@@ -66,7 +79,7 @@ namespace dotnetcoreapi_cake_shop.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCategory([FromRoute] int? id, [FromBody] CategoryRequestDto categoryRequestDto)
         {
-            if(!id.HasValue || categoryRequestDto == null)
+            if (!id.HasValue || categoryRequestDto == null)
             {
                 return BadRequest(new ResponseDto() { Status = 400, Title = "categoryId is required" });
             }
@@ -75,9 +88,12 @@ namespace dotnetcoreapi_cake_shop.Controllers
             {
                 var updatedCategoryResponseDto = await _categoryService.UpdateCategory(id.Value, categoryRequestDto);
 
-                return Ok(updatedCategoryResponseDto);
+                return Ok(new ResponseDto()
+                {
+                    Data = updatedCategoryResponseDto
+                });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(
                     StatusCodes.Status500InternalServerError,
@@ -98,7 +114,10 @@ namespace dotnetcoreapi_cake_shop.Controllers
             {
                 var deletedCategoryResponseDto = await _categoryService.DeleteCategory(id.Value);
 
-                return Ok(deletedCategoryResponseDto);
+                return Ok(new ResponseDto()
+                {
+                    Data = deletedCategoryResponseDto
+                });
             }
             catch (Exception ex)
             {

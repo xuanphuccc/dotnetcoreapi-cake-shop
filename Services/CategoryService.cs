@@ -22,7 +22,6 @@ namespace dotnetcoreapi_cake_shop.Services
             var allCategories = await _categoryRepository.GetAllCategories().ToListAsync();
 
             var allCategoryResponseDtos = _mapper.Map<List<CategoryResponseDto>>(allCategories);
-
             return allCategoryResponseDtos;
         }
 
@@ -32,7 +31,6 @@ namespace dotnetcoreapi_cake_shop.Services
             var category = await _categoryRepository.GetCategoryById(categoryId);
 
             var categoryResponseDto = _mapper.Map<CategoryResponseDto>(category);
-
             return categoryResponseDto;
         }
 
@@ -44,7 +42,6 @@ namespace dotnetcoreapi_cake_shop.Services
             var createdCategory = await _categoryRepository.CreateCategory(newCategory);
 
             var createdCategoryResponseDto = _mapper.Map<CategoryResponseDto>(createdCategory);
-
             return createdCategoryResponseDto;
         }
 
@@ -75,10 +72,9 @@ namespace dotnetcoreapi_cake_shop.Services
                 throw new Exception("category not found");
             }
 
-            await _categoryRepository.DeleteCategory(category);
+            var deletedCategory = await _categoryRepository.DeleteCategory(category);
 
-            var deletedCategoryResponseDto = _mapper.Map<CategoryResponseDto>(category);
-
+            var deletedCategoryResponseDto = _mapper.Map<CategoryResponseDto>(deletedCategory);
             return deletedCategoryResponseDto;
         }
     }
