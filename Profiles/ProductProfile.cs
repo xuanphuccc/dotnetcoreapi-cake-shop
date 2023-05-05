@@ -12,7 +12,7 @@ namespace dotnetcoreapi_cake_shop.Profiles
             CreateMap<ProductRequestDto, Product>()
                 .ForMember(
                     dest => dest.CreateAt,
-                    opt => opt.MapFrom(src => DateTime.UtcNow)
+                    opt => opt.Ignore()
                  );
             CreateMap<ProductImage, ProductImageResponseDto>();
             CreateMap<ProductImageRequestDto, ProductImage>();

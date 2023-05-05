@@ -12,7 +12,7 @@ namespace dotnetcoreapi_cake_shop.Controllers
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
         public ProductsController(
-            IProductService productService, 
+            IProductService productService,
             ICategoryService categoryService)
         {
             _productService = productService;
@@ -59,10 +59,10 @@ namespace dotnetcoreapi_cake_shop.Controllers
             }
 
             // Check exist category
-            if(productRequestDto.CategoryId != null)
+            if (productRequestDto.CategoryId != null)
             {
                 var existCategory = await _categoryService.GetCategoryById(productRequestDto.CategoryId.Value);
-                if(existCategory == null)
+                if (existCategory == null)
                 {
                     return BadRequest(new ResponseDto() { Status = 400, Title = "category not found" });
                 }
@@ -70,6 +70,7 @@ namespace dotnetcoreapi_cake_shop.Controllers
 
             try
             {
+                // Create product
                 var createdProductResponseDto = await _productService.CreateProduct(productRequestDto);
 
                 return CreatedAtAction(
@@ -77,9 +78,74 @@ namespace dotnetcoreapi_cake_shop.Controllers
                     new { id = createdProductResponseDto.ProductId },
                     new ResponseDto()
                     {
-                        Data = createdProductResponseDto
+                        Data = createdProductResponseDto,
+                        Status = 201,
                     }
                 );
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    new ResponseDto() { Status = 500, Title = ex.Message }
+                );
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateProduct([FromRoute] int? id, [FromBody] ProductRequestDto productRequestDto)
+        {
+            if (!id.HasValue || productRequestDto == null)
+            {
+                return BadRequest(new ResponseDto() { Status = 400, Title = "productId is required" });
+            }
+
+            // Check exist category
+            if (productRequestDto.CategoryId != null)
+            {
+                var existCategory = await _categoryService.GetCategoryById(productRequestDto.CategoryId.Value);
+                if (existCategory == null)
+                {
+                    return BadRequest(new ResponseDto() { Status = 400, Title = "category not found" });
+                }
+            }
+
+            try
+            {
+                // Update product
+                var updatedProductResponseDto = await _productService.UpdateProduct(id.Value, productRequestDto);
+
+                return Ok(new ResponseDto()
+                {
+                    Data = updatedProductResponseDto
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    new ResponseDto() { Status = 500, Title = ex.Message }
+                );
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct([FromRoute] int? id)
+        {
+            if (!id.HasValue)
+            {
+                return BadRequest(new ResponseDto() { Status = 400, Title = "productId is required" });
+            }
+
+            try
+            {
+                // Delete product
+                var deletedProductResponseDto = await _productService.DeleteProduct(id.Value);
+
+                return Ok(new ResponseDto()
+                {
+                    Data = deletedProductResponseDto
+                });
             }
             catch (Exception ex)
             {

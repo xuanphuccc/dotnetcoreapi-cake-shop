@@ -1,7 +1,6 @@
 ﻿using dotnetcoreapi_cake_shop.Data;
 using dotnetcoreapi_cake_shop.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography.X509Certificates;
 
 namespace dotnetcoreapi_cake_shop.Repositories
 {

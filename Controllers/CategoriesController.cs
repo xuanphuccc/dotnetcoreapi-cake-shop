@@ -63,7 +63,8 @@ namespace dotnetcoreapi_cake_shop.Controllers
                     new { id = createdCategoryResponseDto.CategoryId },
                     new ResponseDto()
                     {
-                        Data = createdCategoryResponseDto
+                        Data = createdCategoryResponseDto,
+                        Status = 201,
                     }
                 );
             }

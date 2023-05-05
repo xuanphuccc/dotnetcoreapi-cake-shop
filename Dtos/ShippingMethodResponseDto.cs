@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace dotnetcoreapi_cake_shop.Entities
+namespace dotnetcoreapi_cake_shop.Dtos
 {
-    public class ShippingMethod
+    public class ShippingMethodResponseDto
     {
-        [Key]
         public int ShippingMethodId { get; set; }
 
         [Required]
@@ -27,8 +26,5 @@ namespace dotnetcoreapi_cake_shop.Entities
         public bool IsDefault { get; set; }
 
         public DateTime? CreateAt { get; set; }
-
-
-        public List<Order>? Orders { get; set; }
     }
 }

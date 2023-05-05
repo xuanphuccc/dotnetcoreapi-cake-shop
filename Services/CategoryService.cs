@@ -38,6 +38,7 @@ namespace dotnetcoreapi_cake_shop.Services
         public async Task<CategoryResponseDto> CreateCategory(CategoryRequestDto categoryRequestDto)
         {
             var newCategory = _mapper.Map<Category>(categoryRequestDto);
+            newCategory.CreateAt = DateTime.UtcNow;
 
             var createdCategory = await _categoryRepository.CreateCategory(newCategory);
 

@@ -10,15 +10,12 @@ namespace dotnetcoreapi_cake_shop.Services
     public class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
-        private readonly IProductImageRepository _productImageRepository;
         private readonly IMapper _mapper;
         public ProductService(
             IProductRepository productRepository,
-            IProductImageRepository productImageRepository,
             IMapper mapper)
         {
             _productRepository = productRepository;
-            _productImageRepository = productImageRepository;
             _mapper = mapper;
         }
 
@@ -45,15 +42,9 @@ namespace dotnetcoreapi_cake_shop.Services
         public async Task<ProductResponseDto> CreateProduct(ProductRequestDto productRequestDto)
         {
             var newProduct = _mapper.Map<Product>(productRequestDto);
+            newProduct.CreateAt = DateTime.UtcNow;
 
             var createdProduct = await _productRepository.CreateProduct(newProduct);
-
-            List<ProductImage> productImages = _mapper.Map<List<ProductImage>>(productRequestDto.Images);
-            foreach (var item in productImages)
-            {
-                item.ProductId = createdProduct.ProductId;
-                await _productImageRepository.CreateProductImage(item);
-            }
 
             var createdProductResponseDto = _mapper.Map<ProductResponseDto>(createdProduct);
             return createdProductResponseDto;
@@ -62,7 +53,18 @@ namespace dotnetcoreapi_cake_shop.Services
         // Update product
         public async Task<ProductResponseDto> UpdateProduct(int id, ProductRequestDto productRequestDto)
         {
-            return null!;
+            var existProduct = await _productRepository.GetProductById(id);
+
+            if (existProduct == null)
+            {
+                throw new Exception("product not found");
+            }
+
+            _mapper.Map(productRequestDto, existProduct);
+            var updatedProduct = await _productRepository.UpdateProduct(existProduct);
+
+            var updatedProductResponseDto = _mapper.Map<ProductResponseDto>(updatedProduct);
+            return updatedProductResponseDto;
         }
 
         // Delete product

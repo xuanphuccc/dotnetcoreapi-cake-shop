@@ -4,17 +4,16 @@ using dotnetcoreapi_cake_shop.Entities;
 
 namespace dotnetcoreapi_cake_shop.Profiles
 {
-    public class CategoryProfile : Profile
+    public class ShippingMethodProfile : Profile
     {
-        public CategoryProfile()
+        public ShippingMethodProfile()
         {
-
-            CreateMap<Category, CategoryResponseDto>();
-            CreateMap<CategoryRequestDto, Category>()
+            CreateMap<ShippingMethod, ShippingMethodResponseDto>();
+            CreateMap<ShippingMethodRequestDto, ShippingMethod>()
                 .ForMember(
                     dest => dest.CreateAt,
                     opt => opt.Ignore()
-                 );
+                );
         }
     }
 }
