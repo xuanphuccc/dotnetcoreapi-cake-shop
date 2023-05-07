@@ -16,9 +16,9 @@ namespace dotnetcoreapi_cake_shop.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllCategories()
+        public async Task<IActionResult> GetAllCategories([FromQuery] int? limit)
         {
-            var allCategoryResponseDtos = await _categoryService.GetAllCategories();
+            var allCategoryResponseDtos = await _categoryService.GetAllCategories(limit);
 
             return Ok(new ResponseDto()
             {

@@ -8,9 +8,14 @@ namespace dotnetcoreapi_cake_shop.Dtos
         [StringLength(100)]
         public string Name { get; set; } = string.Empty;
 
+        [Required]
+        [StringLength(100)]
+        public string Title { get; set; } = string.Empty;
+
         public string? Description { get; set; }
 
+        [Required]
         [StringLength(450)]
-        public string? Image { get; set; }
+        public string Image { get; set; } = string.Empty;
     }
 }

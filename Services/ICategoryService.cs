@@ -5,7 +5,7 @@ namespace dotnetcoreapi_cake_shop.Services
     public interface ICategoryService
     {
         // Get all categories response DTO
-        Task<List<CategoryResponseDto>> GetAllCategories();
+        Task<List<CategoryResponseDto>> GetAllCategories(int? limit = null);
 
         // Get category response DTO
         Task<CategoryResponseDto> GetCategoryById(int categoryId);

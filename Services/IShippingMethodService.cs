@@ -4,10 +4,13 @@ namespace dotnetcoreapi_cake_shop.Services
 {
     public interface IShippingMethodService
     {
-        // Get all shipping methods response DTO
+        // Get all shipping methods
         Task<List<ShippingMethodResponseDto>> GetAllShippingMethods();
 
-        // Get shipping method response DTO
+        // Get default shipping method
+        Task<ShippingMethodResponseDto> GetDefaultShippingMethod();
+
+        // Get shipping method by ID
         Task<ShippingMethodResponseDto> GetShippingMethodById(int shippingMethodId);
 
         // Create shipping method

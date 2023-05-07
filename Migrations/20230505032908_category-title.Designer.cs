@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using dotnetcoreapi_cake_shop.Data;
 
@@ -11,9 +12,10 @@ using dotnetcoreapi_cake_shop.Data;
 namespace dotnetcoreapi_cake_shop.Migrations
 {
     [DbContext(typeof(CakeShopContext))]
-    partial class CakeShopContextModelSnapshot : ModelSnapshot
+    [Migration("20230505032908_category-title")]
+    partial class categorytitle
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,7 +39,6 @@ namespace dotnetcoreapi_cake_shop.Migrations
                         .HasColumnType("ntext");
 
                     b.Property<string>("Image")
-                        .IsRequired()
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
@@ -204,6 +205,11 @@ namespace dotnetcoreapi_cake_shop.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("ntext");
 
+                    b.Property<string>("Ingredients")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("Instructions")
                         .HasColumnType("ntext");
 
@@ -219,8 +225,8 @@ namespace dotnetcoreapi_cake_shop.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Size")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Taste")
                         .HasMaxLength(256)
@@ -228,11 +234,6 @@ namespace dotnetcoreapi_cake_shop.Migrations
 
                     b.Property<string>("Texture")
                         .HasColumnType("ntext");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("ProductId");
 

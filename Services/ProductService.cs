@@ -10,22 +10,39 @@ namespace dotnetcoreapi_cake_shop.Services
     public class ProductService : IProductService
     {
         private readonly IProductRepository _productRepository;
+        private readonly IOrderRepository _orderRepository;
         private readonly IMapper _mapper;
         public ProductService(
             IProductRepository productRepository,
+            IOrderRepository orderRepository,
             IMapper mapper)
         {
             _productRepository = productRepository;
+            _orderRepository = orderRepository;
             _mapper = mapper;
         }
 
 
         // Get all products response DTO
-        public async Task<List<ProductResponseDto>> GetAllProducts()
+        public async Task<List<ProductResponseDto>> GetAllProducts(int? category = null)
         {
-            var allProducts = await _productRepository.GetAllProducts().ToListAsync();
+            var allProductsQuery = _productRepository.GetAllProducts();
 
+            // Get product by category
+            if (category.HasValue)
+            {
+                allProductsQuery = allProductsQuery.Where(p => p.CategoryId == category.Value);
+            }
+
+            var allProducts = await allProductsQuery.ToListAsync();
             var allProductResponseDtos = _mapper.Map<List<ProductResponseDto>>(allProducts);
+
+            // Check products has orders or not
+            foreach (var productResponse in allProductResponseDtos)
+            {
+                await CheckHasOrderProduct(productResponse);
+            }
+
             return allProductResponseDtos;
         }
 
@@ -35,6 +52,8 @@ namespace dotnetcoreapi_cake_shop.Services
             var product = await _productRepository.GetProductById(productId);
 
             var productResponseDto = _mapper.Map<ProductResponseDto>(product);
+            await CheckHasOrderProduct(productResponseDto);
+
             return productResponseDto;
         }
 
@@ -77,10 +96,25 @@ namespace dotnetcoreapi_cake_shop.Services
                 throw new Exception("product not found");
             }
 
+            // Check product has orders or not
+            var hasOrders = await _orderRepository.HasOrders(productId);
+            if(hasOrders > 0)
+            {
+                throw new Exception("this product already  on order");
+            }
+
+
             var deletedProduct = await _productRepository.DeleteProduct(existProduct);
 
             var deletedProductResponseDto = _mapper.Map<ProductResponseDto>(deletedProduct);
             return deletedProductResponseDto;
+        }
+
+        // Check product has orders or not
+        private async Task CheckHasOrderProduct(ProductResponseDto productResponseDto)
+        {
+            productResponseDto.HasOrders = await _orderRepository.HasOrders(productResponseDto.ProductId);
+
         }
     }
 }

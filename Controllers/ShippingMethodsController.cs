@@ -46,6 +46,21 @@ namespace dotnetcoreapi_cake_shop.Controllers
             });
         }
 
+        [HttpGet("default")]
+        public async Task<IActionResult> GetDefaultShippingMethod()
+        {
+            var shippingMethodResponseDto = await _shippingMethodService.GetDefaultShippingMethod();
+            if (shippingMethodResponseDto == null)
+            {
+                return NotFound(new ResponseDto() { Status = 404, Title = "shipping method not found" });
+            }
+
+            return Ok(new ResponseDto()
+            {
+                Data = shippingMethodResponseDto
+            });
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateShippingMethod([FromBody] ShippingMethodRequestDto shippingMethodRequestDto)
         {

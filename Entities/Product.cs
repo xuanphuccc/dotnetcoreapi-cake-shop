@@ -17,7 +17,7 @@ namespace dotnetcoreapi_cake_shop.Entities
 
         [Required]
         [StringLength(100)]
-        public string Ingredients { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
 
         [Column(TypeName = "ntext")]
         public string? Description { get; set; }
@@ -28,8 +28,8 @@ namespace dotnetcoreapi_cake_shop.Entities
         [Column(TypeName = "ntext")]
         public string? Texture { get; set; }
 
-        [Required]
-        public string Size { get; set; } = string.Empty;
+        [StringLength(200)]
+        public string? Size { get; set; }
 
         [Column(TypeName = "ntext")]
         public string? Accessories { get; set; }

@@ -17,11 +17,19 @@ namespace dotnetcoreapi_cake_shop.Services
         }
 
         // Get all categories response DTO
-        public async Task<List<CategoryResponseDto>> GetAllCategories()
+        public async Task<List<CategoryResponseDto>> GetAllCategories(int? limit = null)
         {
-            var allCategories = await _categoryRepository.GetAllCategories().ToListAsync();
+            var allCategoriesQuery = _categoryRepository.GetAllCategories();
 
+            // Get limit categories
+            if(limit.HasValue)
+            {
+                allCategoriesQuery = allCategoriesQuery.Take(limit.Value);
+            }
+
+            var allCategories = await allCategoriesQuery.ToListAsync();
             var allCategoryResponseDtos = _mapper.Map<List<CategoryResponseDto>>(allCategories);
+
             return allCategoryResponseDtos;
         }
 
@@ -51,7 +59,7 @@ namespace dotnetcoreapi_cake_shop.Services
         {
             var existCategory = await _categoryRepository.GetCategoryById(id);
 
-            if(existCategory == null)
+            if (existCategory == null)
             {
                 throw new Exception("category not found");
             }
@@ -68,7 +76,7 @@ namespace dotnetcoreapi_cake_shop.Services
         {
             var category = await _categoryRepository.GetCategoryById(categoryId);
 
-            if(category == null)
+            if (category == null)
             {
                 throw new Exception("category not found");
             }

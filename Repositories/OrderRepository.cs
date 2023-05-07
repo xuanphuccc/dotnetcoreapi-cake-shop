@@ -39,6 +39,14 @@ namespace dotnetcoreapi_cake_shop.Repositories
             return order!;
         }
 
+        // Check product has orders or not
+        public async Task<int> HasOrders(int productId)
+        {
+            var hasOrders = await _context.OrderItems.CountAsync(oi => oi.ProductId == productId);
+
+            return hasOrders;
+        }
+
         // Create order
         public async Task<Order> CreateOrder(Order order)
         {

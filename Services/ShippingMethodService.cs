@@ -19,7 +19,7 @@ namespace dotnetcoreapi_cake_shop.Services
         }
 
 
-        // Get all shipping methods response DTO
+        // Get all shipping methods
         public async Task<List<ShippingMethodResponseDto>> GetAllShippingMethods()
         {
             var allShippingMethods = await _shippingMethodRepository
@@ -30,7 +30,17 @@ namespace dotnetcoreapi_cake_shop.Services
             return allShippingMethodResponseDto;
         }
 
-        // Get shipping method response DTO
+        // Get default shipping method
+        public async Task<ShippingMethodResponseDto> GetDefaultShippingMethod()
+        {
+            var defaultShippingMethod = (await _shippingMethodRepository
+                                        .GetDefaultShippingMethods()).FirstOrDefault();
+
+            var defaultShippingMethodResponseDto = _mapper.Map<ShippingMethodResponseDto>(defaultShippingMethod);
+            return defaultShippingMethodResponseDto;
+        }
+
+        // Get shipping method by ID
         public async Task<ShippingMethodResponseDto> GetShippingMethodById(int shippingMethodId)
         {
             var shippingMethod = await _shippingMethodRepository.GetShippingMethodById(shippingMethodId);

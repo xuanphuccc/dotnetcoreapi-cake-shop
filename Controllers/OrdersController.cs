@@ -20,6 +20,7 @@ namespace dotnetcoreapi_cake_shop.Controllers
         {
             try
             {
+                // Get all orders
                 var allOrderResponseDtos = await _orderService.GetAllOrders();
 
                 return Ok(new ResponseDto()
@@ -46,6 +47,7 @@ namespace dotnetcoreapi_cake_shop.Controllers
 
             try
             {
+                // Get order
                 var orderResponseDto = await _orderService.GetOrderById(id.Value);
                 if (orderResponseDto == null)
                 {
@@ -57,7 +59,7 @@ namespace dotnetcoreapi_cake_shop.Controllers
                     Data = orderResponseDto
                 });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(
                     StatusCodes.Status500InternalServerError,
@@ -88,6 +90,87 @@ namespace dotnetcoreapi_cake_shop.Controllers
                         Status = 201,
                     }
                 );
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    new ResponseDto() { Status = 500, Title = ex.Message }
+                );
+            }
+        }
+
+        [HttpPut("delivery/{id}")]
+        public async Task<IActionResult> DeliveryOrder([FromRoute] int? id)
+        {
+            if (!id.HasValue)
+            {
+                return BadRequest(new ResponseDto() { Status = 400, Title = "orderId is required" });
+            }
+
+            try
+            {
+                // Delivery order
+                var updatedOrderResponseDto = await _orderService.DeliveryOrder(id.Value);
+
+                return Ok(new ResponseDto()
+                {
+                    Data = updatedOrderResponseDto
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    new ResponseDto() { Status = 500, Title = ex.Message }
+                );
+            }
+        }
+
+        [HttpPut("complete/{id}")]
+        public async Task<IActionResult> CompleteOrder([FromRoute] int? id)
+        {
+            if (!id.HasValue)
+            {
+                return BadRequest(new ResponseDto() { Status = 400, Title = "orderId is required" });
+            }
+
+            try
+            {
+                // Complete order
+                var updatedOrderResponseDto = await _orderService.SuccessOrder(id.Value);
+
+                return Ok(new ResponseDto()
+                {
+                    Data = updatedOrderResponseDto
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    new ResponseDto() { Status = 500, Title = ex.Message }
+                );
+            }
+        }
+
+        [HttpPut("cancel/{id}")]
+        public async Task<IActionResult> CancelOrder([FromRoute] int? id)
+        {
+            if (!id.HasValue)
+            {
+                return BadRequest(new ResponseDto() { Status = 400, Title = "orderId is required" });
+            }
+
+            try
+            {
+                // Cancel order
+                var updatedOrderResponseDto = await _orderService.CancelOrder(id.Value);
+
+                return Ok(new ResponseDto()
+                {
+                    Data = updatedOrderResponseDto
+                });
             }
             catch (Exception ex)
             {

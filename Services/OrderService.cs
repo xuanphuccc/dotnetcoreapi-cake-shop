@@ -32,7 +32,10 @@ namespace dotnetcoreapi_cake_shop.Services
         // Get all orders response DTO
         public async Task<List<OrderResponseDto>> GetAllOrders()
         {
-            var allOrders = await _orderRepository.GetAllOrders().ToListAsync();
+            var allOrders = await _orderRepository
+                                    .GetAllOrders()
+                                    .OrderByDescending(o => o.CreateAt)
+                                    .ToListAsync();
 
             var allOrderResponseDtos = _mapper.Map<List<OrderResponseDto>>(allOrders);
             return allOrderResponseDtos;
@@ -94,9 +97,16 @@ namespace dotnetcoreapi_cake_shop.Services
             {
                 newOrder.ShippingMethodId = defaultShippingMethod.ShippingMethodId;
 
+                // Example:
+                // initCharge = 16.000 đ
+                // initDistance = 2 km
+                // additionalCharge = 5.500 đ (if distance > initDistance)
+                // distance = 4 km
+                // shippingCost = initCharge + (distance - initDistance) * additionalCharge
+                // => shippingCost = 16.000 + (4 - 2) * 5.500
                 if (orderRequestDto.Distance > defaultShippingMethod.InitialDistance)
                 {
-                    shippingFee = defaultShippingMethod.InitialCharge 
+                    shippingFee = defaultShippingMethod.InitialCharge
                                   + (decimal)(Math.Ceiling(orderRequestDto.Distance) - defaultShippingMethod.InitialDistance) * defaultShippingMethod.AdditionalCharge;
                 }
                 else
@@ -118,17 +128,88 @@ namespace dotnetcoreapi_cake_shop.Services
         }
 
         // Update order status
-        public async Task<OrderResponseDto> DeliveryOrder(int id)
+        // Delivery
+        public async Task<OrderResponseDto> DeliveryOrder(int orderId)
         {
-            return null;
+            var existOrder = await _orderRepository.GetOrderById(orderId);
+
+            if (existOrder == null)
+            {
+
+                throw new Exception("order not found");
+            }
+
+            // Get order status
+            OrderStatus deliveryStatus = await _orderStatusRepository.GetOrderStatusByStatus("delivery");
+
+            if (deliveryStatus == null)
+            {
+                // If 'delivery' status does not exist -> create new 'delivery' status
+                deliveryStatus = await CreateOrderStatus("Đang giao hàng", "delivery");
+            }
+
+            // Update new order status
+            existOrder.OrderStatusId = deliveryStatus.OrderStatusId;
+            var updatedOrder = await _orderRepository.UpdateOrder(existOrder);
+
+            var updatedOrderResponseDto = _mapper.Map<OrderResponseDto>(updatedOrder);
+            return updatedOrderResponseDto;
         }
-        public async Task<OrderResponseDto> CancelOrder(int id)
+
+        // Cancelled
+        public async Task<OrderResponseDto> CancelOrder(int orderId)
         {
-            return null;
+            var existOrder = await _orderRepository.GetOrderById(orderId);
+
+            if (existOrder == null)
+            {
+
+                throw new Exception("order not found");
+            }
+
+            // Get order status
+            OrderStatus deliveryStatus = await _orderStatusRepository.GetOrderStatusByStatus("cancelled");
+
+            if (deliveryStatus == null)
+            {
+                // If 'cancelled' status does not exist -> create new 'cancelled' status
+                deliveryStatus = await CreateOrderStatus("Đã huỷ đơn hàng", "cancelled");
+            }
+
+            // Update new order status
+            existOrder.OrderStatusId = deliveryStatus.OrderStatusId;
+            var cancelledOrder = await _orderRepository.UpdateOrder(existOrder);
+
+            var updatedOrderResponseDto = _mapper.Map<OrderResponseDto>(cancelledOrder);
+            return updatedOrderResponseDto;
         }
-        public async Task<OrderResponseDto> SuccessOrder(int id)
+
+        // Completed
+        public async Task<OrderResponseDto> SuccessOrder(int orderId)
         {
-            return null;
+            var existOrder = await _orderRepository.GetOrderById(orderId);
+
+            if (existOrder == null)
+            {
+
+                throw new Exception("order not found");
+            }
+
+            // Get order status
+            OrderStatus deliveryStatus = await _orderStatusRepository.GetOrderStatusByStatus("completed");
+
+            if (deliveryStatus == null)
+            {
+                // If 'completed' status does not exist -> create new 'completed' status
+                deliveryStatus = await CreateOrderStatus("Đã hoàn thành", "completed");
+            }
+
+            // Update new order status
+            existOrder.OrderStatusId = deliveryStatus.OrderStatusId;
+            var completedOrder = await _orderRepository.UpdateOrder(existOrder);
+
+            var updatedOrderResponseDto = _mapper.Map<OrderResponseDto>(completedOrder);
+            return updatedOrderResponseDto;
         }
 
         // Delete order
@@ -153,7 +234,7 @@ namespace dotnetcoreapi_cake_shop.Services
         {
             var newStatus = new OrderStatus()
             {
-                Name = name.ToLower(),
+                Name = name,
                 Status = status.ToLower(),
             };
 

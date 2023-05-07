@@ -14,7 +14,7 @@ namespace dotnetcoreapi_cake_shop.Dtos
 
         [Required]
         [StringLength(100)]
-        public string Ingredients { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
 
         public string? Description { get; set; }
 
@@ -23,8 +23,8 @@ namespace dotnetcoreapi_cake_shop.Dtos
 
         public string? Texture { get; set; }
 
-        [Required]
-        public string Size { get; set; } = string.Empty;
+        [StringLength(200)]
+        public string? Size { get; set; }
 
         public string? Accessories { get; set; }
 

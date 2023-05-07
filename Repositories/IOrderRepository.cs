@@ -10,6 +10,9 @@ namespace dotnetcoreapi_cake_shop.Repositories
         // Get order by id
         Task<Order> GetOrderById(int orderId);
 
+        // Check product has orders or not
+        Task<int> HasOrders(int productId);
+
         // Create order
         Task<Order> CreateOrder(Order order);
 
