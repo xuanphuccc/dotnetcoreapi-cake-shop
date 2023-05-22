@@ -19,6 +19,8 @@ builder.Services.AddDbContext<CakeShopContext>(options =>
     options.UseSqlServer(connectionString);
 });
 
+Console.WriteLine(builder.Configuration["ConnectionStrings:CakeShopContext"]);
+
 // Add auto mapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
