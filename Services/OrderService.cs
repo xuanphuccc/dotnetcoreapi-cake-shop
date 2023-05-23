@@ -30,15 +30,69 @@ namespace dotnetcoreapi_cake_shop.Services
 
 
         // Get all orders response DTO
-        public async Task<List<OrderResponseDto>> GetAllOrders()
+        public async Task<ResponseDto> GetAllOrders(
+            int? status = null,
+            int? pageSize = null,
+            int? page = null,
+            string? sort = null,
+            string? search = null)
         {
-            var allOrders = await _orderRepository
-                                    .GetAllOrders()
-                                    .OrderByDescending(o => o.CreateAt)
-                                    .ToListAsync();
+            var allOrdersQuery = _orderRepository.GetAllOrders();
 
+            // Status filter
+            if(status.HasValue)
+            {
+                allOrdersQuery = allOrdersQuery.Where(o => o.OrderStatusId == status.Value);
+            }
+
+            // Search by customer name
+            if(!string.IsNullOrEmpty(search))
+            {
+                allOrdersQuery = allOrdersQuery.Where(o => o.CustomerName.ToLower().Contains(search.ToLower()));
+            }
+
+            // Sort
+            sort ??= "creationTimeDesc";
+            if (!string.IsNullOrEmpty(sort))
+            {
+                switch (sort)
+                {
+                    case "nameAsc":
+                        allOrdersQuery = allOrdersQuery.OrderBy(p => p.CustomerName);
+                        break;
+                    case "nameDesc":
+                        allOrdersQuery = allOrdersQuery.OrderByDescending(p => p.CustomerName);
+                        break;
+                    case "creationTimeAsc":
+                        allOrdersQuery = allOrdersQuery.OrderBy(p => p.CreateAt);
+                        break;
+                    case "creationTimeDesc":
+                        allOrdersQuery = allOrdersQuery.OrderByDescending(p => p.CreateAt);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            // Paging
+            int totalPage = 1;
+            if (pageSize.HasValue && page.HasValue)
+            {
+                int totalItems = await allOrdersQuery.CountAsync();
+                totalPage = (int)Math.Ceiling((double)totalItems / pageSize.Value);
+
+                allOrdersQuery = allOrdersQuery.Skip((page.Value - 1) * pageSize.Value)
+                                                   .Take(pageSize.Value);
+            }
+
+            var allOrders = await allOrdersQuery.ToListAsync();
             var allOrderResponseDtos = _mapper.Map<List<OrderResponseDto>>(allOrders);
-            return allOrderResponseDtos;
+
+            return new ResponseDto()
+            {
+                Data = allOrderResponseDtos,
+                TotalPage = totalPage,
+            };
         }
 
         // Get order response DTO

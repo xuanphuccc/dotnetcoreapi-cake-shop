@@ -20,14 +20,16 @@ namespace dotnetcoreapi_cake_shop.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllProducts([FromQuery] int? category)
+        public async Task<IActionResult> GetAllProducts(
+            [FromQuery] int? category,
+            [FromQuery] int? pageSize,
+            [FromQuery] int? page,
+            [FromQuery] string? sort,
+            [FromQuery] string? search)
         {
-            var allProductResponseDtos = await _productService.GetAllProducts(category);
+            var allProductResponseDtos = await _productService.GetAllProducts(category, pageSize, page, sort, search);
 
-            return Ok(new ResponseDto()
-            {
-                Data = allProductResponseDtos
-            });
+            return Ok(allProductResponseDtos);
         }
 
         [HttpGet("{id}")]

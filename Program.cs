@@ -37,6 +37,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IShippingMethodService, ShippingMethodService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IOrderStatusService, OrderStatusService>();
 
 
 builder.Services.AddCors(options =>

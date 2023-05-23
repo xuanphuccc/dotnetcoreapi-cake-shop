@@ -12,6 +12,14 @@ namespace dotnetcoreapi_cake_shop.Repositories
             _context = context;
         }
 
+        // Get all order statuses
+        public IQueryable<OrderStatus> GetAllOrderStatuses()
+        {
+            var orderStatuses = _context.OrderStatuses.AsQueryable();
+
+            return orderStatuses;
+        }
+
         // Get order status by id
         public async Task<OrderStatus> GetOrderStatusById(int orderStatusId)
         {
@@ -37,7 +45,7 @@ namespace dotnetcoreapi_cake_shop.Repositories
             await _context.OrderStatuses.AddAsync(orderStatus);
             var result = await _context.SaveChangesAsync();
 
-            if(result == 0)
+            if (result == 0)
             {
                 throw new Exception("cannot create order status");
             }
@@ -51,7 +59,7 @@ namespace dotnetcoreapi_cake_shop.Repositories
             _context.OrderStatuses.Remove(orderStatus);
             var result = await _context.SaveChangesAsync();
 
-            if(result == 0)
+            if (result == 0)
             {
                 throw new Exception("cannot delete order status");
             }
