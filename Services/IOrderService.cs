@@ -1,11 +1,17 @@
 ﻿using dotnetcoreapi_cake_shop.Dtos;
+using Microsoft.AspNetCore.Mvc;
 
 namespace dotnetcoreapi_cake_shop.Services
 {
     public interface IOrderService
     {
         // Get all orders response DTO
-        Task<List<OrderResponseDto>> GetAllOrders();
+        Task<ResponseDto> GetAllOrders(
+            int? status = null,
+            int? pageSize = null,
+            int? page = null,
+            string? sort = null,
+            string? search = null);
 
         // Get order response DTO
         Task<OrderResponseDto> GetOrderById(int orderId);

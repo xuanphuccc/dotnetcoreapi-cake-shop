@@ -2,6 +2,8 @@
 using dotnetcoreapi_cake_shop.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Drawing.Printing;
 
 namespace dotnetcoreapi_cake_shop.Controllers
 {
@@ -16,17 +18,19 @@ namespace dotnetcoreapi_cake_shop.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllOrders()
+        public async Task<IActionResult> GetAllOrders(
+            [FromQuery] int? status,
+            [FromQuery] int? pageSize,
+            [FromQuery] int? page,
+            [FromQuery] string? sort,
+            [FromQuery] string? search)
         {
             try
             {
                 // Get all orders
-                var allOrderResponseDtos = await _orderService.GetAllOrders();
+                var allOrderResponseDtos = await _orderService.GetAllOrders(status, pageSize, page, sort, search);
 
-                return Ok(new ResponseDto()
-                {
-                    Data = allOrderResponseDtos
-                });
+                return Ok(allOrderResponseDtos);
             }
             catch (Exception ex)
             {

@@ -1,11 +1,17 @@
 ﻿using dotnetcoreapi_cake_shop.Dtos;
+using Microsoft.AspNetCore.Mvc;
 
 namespace dotnetcoreapi_cake_shop.Services
 {
     public interface IProductService
     {
         // Get all products response DTO
-        Task<List<ProductResponseDto>> GetAllProducts(int? category = null);
+        Task<ResponseDto> GetAllProducts(
+            int? category = null, 
+            int? pageSize = null, 
+            int? page = null, 
+            string? sort = null, 
+            string? search = null);
 
         // Get product response DTO
         Task<ProductResponseDto> GetProductById(int productId);

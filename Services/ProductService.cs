@@ -24,14 +24,58 @@ namespace dotnetcoreapi_cake_shop.Services
 
 
         // Get all products response DTO
-        public async Task<List<ProductResponseDto>> GetAllProducts(int? category = null)
+        public async Task<ResponseDto> GetAllProducts(
+            int? category = null,
+            int? pageSize = null,
+            int? page = null,
+            string? sort = null,
+            string? search = null)
         {
             var allProductsQuery = _productRepository.GetAllProducts();
 
-            // Get product by category
+            // Get products by category
             if (category.HasValue)
             {
                 allProductsQuery = allProductsQuery.Where(p => p.CategoryId == category.Value);
+            }
+
+            // Search products
+            if (!string.IsNullOrEmpty(search))
+            {
+                allProductsQuery = allProductsQuery.Where(p => p.Name.ToLower().Contains(search.ToLower()));
+            }
+
+            // Sort
+            if (!string.IsNullOrEmpty(sort))
+            {
+                switch (sort)
+                {
+                    case "nameAsc":
+                        allProductsQuery = allProductsQuery.OrderBy(p => p.Name);
+                        break;
+                    case "nameDesc":
+                        allProductsQuery = allProductsQuery.OrderByDescending(p => p.Name);
+                        break;
+                    case "creationTimeAsc":
+                        allProductsQuery = allProductsQuery.OrderBy(p => p.CreateAt);
+                        break;
+                    case "creationTimeDesc":
+                        allProductsQuery = allProductsQuery.OrderByDescending(p => p.CreateAt);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            // Paging
+            int totalPage = 1;
+            if (pageSize.HasValue && page.HasValue)
+            {
+                int totalItems = await allProductsQuery.CountAsync();
+                totalPage = (int)Math.Ceiling((double)totalItems / pageSize.Value);
+
+                allProductsQuery = allProductsQuery.Skip((page.Value - 1) * pageSize.Value)
+                                                   .Take(pageSize.Value);
             }
 
             var allProducts = await allProductsQuery.ToListAsync();
@@ -43,7 +87,11 @@ namespace dotnetcoreapi_cake_shop.Services
                 await CheckHasOrderProduct(productResponse);
             }
 
-            return allProductResponseDtos;
+            return new ResponseDto()
+            {
+                Data = allProductResponseDtos,
+                TotalPage = totalPage
+            };
         }
 
         // Get product response DTO
@@ -98,7 +146,7 @@ namespace dotnetcoreapi_cake_shop.Services
 
             // Check product has orders or not
             var hasOrders = await _orderRepository.HasOrders(productId);
-            if(hasOrders > 0)
+            if (hasOrders > 0)
             {
                 throw new Exception("this product already  on order");
             }
@@ -114,7 +162,6 @@ namespace dotnetcoreapi_cake_shop.Services
         private async Task CheckHasOrderProduct(ProductResponseDto productResponseDto)
         {
             productResponseDto.HasOrders = await _orderRepository.HasOrders(productResponseDto.ProductId);
-
         }
     }
 }

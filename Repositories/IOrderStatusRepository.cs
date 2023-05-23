@@ -4,6 +4,9 @@ namespace dotnetcoreapi_cake_shop.Repositories
 {
     public interface IOrderStatusRepository
     {
+        // Get all order statuses
+        IQueryable<OrderStatus> GetAllOrderStatuses();
+
         // Get order status by id
         Task<OrderStatus> GetOrderStatusById(int orderStatusId);
 
